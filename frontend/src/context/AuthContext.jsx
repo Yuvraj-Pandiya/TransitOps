@@ -21,37 +21,56 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const extractAndSetUser = useCallback((parsedToken) => {
-    if (!parsedToken) return;
+  const extractAndSetUser = useCallback((tokenParsed, idTokenParsed) => {
+    const parsed = tokenParsed || {};
+    const idParsed = idTokenParsed || {};
 
-    const realmRoles = parsedToken.realm_access?.roles || [];
-    const directRoles = parsedToken.roles || [];
-    const clientRoles = Object.values(parsedToken.resource_access || {}).flatMap(
-      (c) => c.roles || []
-    );
+    const realmRoles = [
+      ...(parsed.realm_access?.roles || []),
+      ...(idParsed.realm_access?.roles || []),
+    ];
+    const directRoles = [
+      ...(parsed.roles || []),
+      ...(idParsed.roles || []),
+    ];
+    const clientRoles = [
+      ...Object.values(parsed.resource_access || {}).flatMap((c) => c.roles || []),
+      ...Object.values(idParsed.resource_access || {}).flatMap((c) => c.roles || []),
+    ];
 
-    // Combine all potential role locations in Keycloak JWT
     const rawRoles = Array.from(new Set([...realmRoles, ...directRoles, ...clientRoles]));
     const normalizedRoles = rawRoles.map(normalizeRole);
 
-    console.log('[TransitOps] Keycloak Token Claims:', {
-      user: parsedToken.preferred_username,
+    const displayName = parsed.name || idParsed.name ||
+      (parsed.given_name ? `${parsed.given_name} ${parsed.family_name || ''}`.trim() : '') ||
+      (idParsed.given_name ? `${idParsed.given_name} ${idParsed.family_name || ''}`.trim() : '') ||
+      parsed.preferred_username || idParsed.preferred_username || 'User';
+
+    const username = parsed.preferred_username || idParsed.preferred_username || '';
+    const email = parsed.email || idParsed.email || '';
+    const id = parsed.sub || idParsed.sub || '';
+
+    console.log('[TransitOps] Authenticated Session Details:', {
+      username,
+      displayName,
       realmRoles,
       clientRoles,
       normalizedRoles,
+      tokenParsed: parsed,
+      idTokenParsed: idParsed,
     });
 
     const primaryRole = KNOWN_ROLES.find((r) => normalizedRoles.includes(r)) || normalizedRoles[0] || 'USER';
-    const displayName = parsedToken.name || (parsedToken.given_name ? `${parsedToken.given_name} ${parsedToken.family_name || ''}`.trim() : '') || parsedToken.preferred_username || 'User';
 
     setUser({
-      id: parsedToken.sub,
-      username: parsedToken.preferred_username || '',
+      id,
+      username,
       name: displayName,
-      email: parsedToken.email || '',
+      email,
       role: primaryRole,
       roles: normalizedRoles,
       rawRoles,
+      tokenClaims: parsed,
     });
   }, []);
 
@@ -64,8 +83,8 @@ export const AuthProvider = ({ children }) => {
 
         setIsAuthenticated(!!authenticated);
 
-        if (authenticated && keycloak.tokenParsed) {
-          extractAndSetUser(keycloak.tokenParsed);
+        if (authenticated) {
+          extractAndSetUser(keycloak.tokenParsed, keycloak.idTokenParsed);
         }
         setLoading(false);
       })
@@ -81,7 +100,7 @@ export const AuthProvider = ({ children }) => {
     };
   }, [extractAndSetUser]);
 
-  // Logout calls Keycloak logout to end SSO session
+  // Logout calls Keycloak logout to clear both local and Keycloak SSO sessions
   const logout = useCallback(() => {
     keycloak.logout({ redirectUri: window.location.origin });
   }, []);
@@ -94,9 +113,7 @@ export const AuthProvider = ({ children }) => {
   const refreshToken = useCallback(async () => {
     try {
       await keycloak.updateToken(-1);
-      if (keycloak.tokenParsed) {
-        extractAndSetUser(keycloak.tokenParsed);
-      }
+      extractAndSetUser(keycloak.tokenParsed, keycloak.idTokenParsed);
       return true;
     } catch (err) {
       console.warn('Failed to refresh token, triggering re-login:', err);
@@ -105,16 +122,25 @@ export const AuthProvider = ({ children }) => {
     }
   }, [extractAndSetUser]);
 
-  // Check roles against realm_access.roles and client roles (normalized)
+  // Check roles against realm_access, direct roles, and client roles (normalized)
   const hasRole = useCallback((...requiredRoles) => {
-    if (!keycloak.tokenParsed) return false;
-    const realmRoles = keycloak.tokenParsed.realm_access?.roles || [];
-    const directRoles = keycloak.tokenParsed.roles || [];
-    const clientRoles = Object.values(keycloak.tokenParsed.resource_access || {}).flatMap(
-      (c) => c.roles || []
-    );
+    const parsed = keycloak.tokenParsed || {};
+    const idParsed = keycloak.idTokenParsed || {};
 
-    const allRoles = [...realmRoles, ...directRoles, ...clientRoles].map(normalizeRole);
+    const realmRoles = [
+      ...(parsed.realm_access?.roles || []),
+      ...(idParsed.realm_access?.roles || []),
+    ];
+    const directRoles = [
+      ...(parsed.roles || []),
+      ...(idParsed.roles || []),
+    ];
+    const clientRoles = [
+      ...Object.values(parsed.resource_access || {}).flatMap((c) => c.roles || []),
+      ...Object.values(idParsed.resource_access || {}).flatMap((c) => c.roles || []),
+    ];
+
+    const allRoles = Array.from(new Set([...realmRoles, ...directRoles, ...clientRoles])).map(normalizeRole);
 
     // ADMIN has universal operational role access
     if (allRoles.includes('ADMIN')) {

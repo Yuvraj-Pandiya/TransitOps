@@ -250,11 +250,28 @@ export default function Settings() {
                   onClick={handleManualTokenRefresh}
                   className="btn-logistica-secondary"
                   disabled={tokenRefreshing}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13 }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, width: '100%', justifyContent: 'center' }}
                 >
                   <RefreshCw size={14} className={tokenRefreshing ? 'spin-icon' : ''} />
                   {tokenRefreshing ? 'Refreshing...' : 'Test Manual Token Refresh'}
                 </button>
+
+                <details style={{ marginTop: 12, fontSize: 12, color: 'var(--text-muted)' }}>
+                  <summary style={{ cursor: 'pointer', color: 'var(--primary-light)', fontWeight: 600 }}>Inspect Raw Token Claims</summary>
+                  <pre style={{
+                    marginTop: 8,
+                    padding: 10,
+                    background: 'rgba(0,0,0,0.3)',
+                    borderRadius: 6,
+                    overflow: 'auto',
+                    maxHeight: 200,
+                    fontSize: 11,
+                    color: '#a5b4fc',
+                    border: '1px solid var(--border-color)'
+                  }}>
+                    {JSON.stringify(user?.tokenClaims || keycloak.tokenParsed || {}, null, 2)}
+                  </pre>
+                </details>
               </div>
             </div>
           </div>

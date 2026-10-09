@@ -13,7 +13,8 @@ let initPromise = null;
 /**
  * Initializes Keycloak with Authorization Code Flow + PKCE (S256)
  * and onLoad: 'login-required'.
- * Memoized promise prevents duplicate initializations in React StrictMode.
+ * Requesting 'openid roles profile email' ensures Keycloak includes
+ * realm_access.roles and user profile claims in the access token.
  */
 export const initKeycloak = () => {
   if (!initPromise) {
@@ -21,6 +22,7 @@ export const initKeycloak = () => {
       onLoad: 'login-required',
       pkceMethod: 'S256',
       checkLoginIframe: false,
+      scope: 'openid roles profile email',
     });
   }
   return initPromise;
