@@ -2,8 +2,10 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   LayoutDashboard, Truck, Users, Route, Wrench,
-  Fuel, BarChart3, LogOut, Zap, Settings, ShieldAlert
+  Fuel, BarChart3, LogOut, Zap, Settings, ShieldAlert, RefreshCw
 } from 'lucide-react';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', section: 'overview', roles: ['ADMIN', 'FLEET_MANAGER', 'DISPATCHER'] },
@@ -32,10 +34,24 @@ const roleLabels = {
 };
 
 export default function Sidebar() {
-  const { user, logout, hasRole } = useAuth();
+  const { user, logout, hasRole, refreshToken } = useAuth();
+  const [refreshing, setRefreshing] = useState(false);
 
   const handleLogout = () => {
     logout();
+  };
+
+  const handleQuickRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refreshToken();
+      toast.success('Roles refreshed from Keycloak!');
+    } catch {
+      toast.error('Re-authenticating session...');
+      logout();
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   // Filter nav items based on user's Keycloak roles
@@ -68,18 +84,62 @@ export default function Sidebar() {
         {hasNoRoles && (
           <div style={{
             margin: '0 16px 16px',
-            padding: '10px 12px',
-            borderRadius: '6px',
-            background: 'rgba(239, 68, 68, 0.1)',
-            border: '1px solid rgba(239, 68, 68, 0.25)',
+            padding: '12px',
+            borderRadius: '8px',
+            background: 'rgba(239, 68, 68, 0.12)',
+            border: '1px solid rgba(239, 68, 68, 0.3)',
             fontSize: '12px',
-            color: '#ef4444',
+            color: '#f87171',
             display: 'flex',
-            alignItems: 'center',
+            flexDirection: 'column',
             gap: '8px'
           }}>
-            <ShieldAlert size={16} style={{ flexShrink: 0 }} />
-            <span>No role mapped in Keycloak. Assign role in Keycloak Admin.</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}>
+              <ShieldAlert size={16} style={{ flexShrink: 0 }} />
+              <span>Roles Pending in Session</span>
+            </div>
+            <span style={{ color: '#cbd5e1', fontSize: '11px', lineHeight: 1.4 }}>
+              Assigned a role in Keycloak? Update your session token:
+            </span>
+            <div style={{ display: 'flex', gap: '6px', marginTop: '4px' }}>
+              <button
+                onClick={handleQuickRefresh}
+                disabled={refreshing}
+                style={{
+                  flex: 1,
+                  background: 'var(--logistica-primary)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  padding: '6px 8px',
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px'
+                }}
+              >
+                <RefreshCw size={12} className={refreshing ? 'spin-icon' : ''} />
+                {refreshing ? 'Updating...' : 'Sync Roles'}
+              </button>
+              <button
+                onClick={handleLogout}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  color: 'white',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '4px',
+                  padding: '6px 8px',
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+              >
+                Re-Login
+              </button>
+            </div>
           </div>
         )}
 

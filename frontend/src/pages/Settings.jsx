@@ -212,7 +212,22 @@ export default function Settings() {
                       );
                     })
                   ) : (
-                    <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>No recognized TransitOps roles assigned.</div>
+                    <div style={{
+                      padding: '12px',
+                      background: 'rgba(239, 68, 68, 0.08)',
+                      borderRadius: 8,
+                      border: '1px solid rgba(239, 68, 68, 0.2)'
+                    }}>
+                      <div style={{ color: '#ef4444', fontWeight: 600, fontSize: 13, marginBottom: 4 }}>
+                        No recognized roles in active token.
+                      </div>
+                      <div style={{ color: 'var(--text-muted)', fontSize: 12, lineHeight: 1.5, marginBottom: 8 }}>
+                        Token currently holds: <code>{JSON.stringify(user?.roles || [])}</code>
+                      </div>
+                      <div style={{ color: '#94a3b8', fontSize: 12 }}>
+                        If you just assigned roles in Keycloak Admin, click <strong>"Test Manual Token Refresh"</strong> below or Log Out and Log In to fetch the new token!
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>

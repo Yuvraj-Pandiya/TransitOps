@@ -21,6 +21,40 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const extractAndSetUser = useCallback((parsedToken) => {
+    if (!parsedToken) return;
+
+    const realmRoles = parsedToken.realm_access?.roles || [];
+    const directRoles = parsedToken.roles || [];
+    const clientRoles = Object.values(parsedToken.resource_access || {}).flatMap(
+      (c) => c.roles || []
+    );
+
+    // Combine all potential role locations in Keycloak JWT
+    const rawRoles = Array.from(new Set([...realmRoles, ...directRoles, ...clientRoles]));
+    const normalizedRoles = rawRoles.map(normalizeRole);
+
+    console.log('[TransitOps] Keycloak Token Claims:', {
+      user: parsedToken.preferred_username,
+      realmRoles,
+      clientRoles,
+      normalizedRoles,
+    });
+
+    const primaryRole = KNOWN_ROLES.find((r) => normalizedRoles.includes(r)) || normalizedRoles[0] || 'USER';
+    const displayName = parsedToken.name || (parsedToken.given_name ? `${parsedToken.given_name} ${parsedToken.family_name || ''}`.trim() : '') || parsedToken.preferred_username || 'User';
+
+    setUser({
+      id: parsedToken.sub,
+      username: parsedToken.preferred_username || '',
+      name: displayName,
+      email: parsedToken.email || '',
+      role: primaryRole,
+      roles: normalizedRoles,
+      rawRoles,
+    });
+  }, []);
+
   useEffect(() => {
     let isMounted = true;
 
@@ -31,34 +65,7 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(!!authenticated);
 
         if (authenticated && keycloak.tokenParsed) {
-          const parsed = keycloak.tokenParsed;
-          const realmRoles = parsed.realm_access?.roles || [];
-          const clientRoles = parsed.resource_access?.['transitops-frontend-client']?.roles || [];
-          const allRoles = Array.from(new Set([...realmRoles, ...clientRoles]));
-          const normalizedRoles = allRoles.map(normalizeRole);
-
-          // Log token parsed info to assist local testing & debugging
-          console.log('[TransitOps] Keycloak Token Authenticated:', {
-            username: parsed.preferred_username,
-            name: parsed.name,
-            email: parsed.email,
-            realmRoles,
-            clientRoles,
-            normalizedRoles,
-          });
-
-          // Determine primary display role
-          const primaryRole = KNOWN_ROLES.find((r) => normalizedRoles.includes(r)) || normalizedRoles[0] || 'USER';
-          const displayName = parsed.name || (parsed.given_name ? `${parsed.given_name} ${parsed.family_name || ''}`.trim() : '') || parsed.preferred_username || 'User';
-
-          setUser({
-            id: parsed.sub,
-            username: parsed.preferred_username || '',
-            name: displayName,
-            email: parsed.email || '',
-            role: primaryRole,
-            roles: normalizedRoles,
-          });
+          extractAndSetUser(keycloak.tokenParsed);
         }
         setLoading(false);
       })
@@ -72,7 +79,7 @@ export const AuthProvider = ({ children }) => {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [extractAndSetUser]);
 
   // Logout calls Keycloak logout to end SSO session
   const logout = useCallback(() => {
@@ -83,12 +90,31 @@ export const AuthProvider = ({ children }) => {
     keycloak.login();
   }, []);
 
+  // Force refreshes token and updates user state
+  const refreshToken = useCallback(async () => {
+    try {
+      await keycloak.updateToken(-1);
+      if (keycloak.tokenParsed) {
+        extractAndSetUser(keycloak.tokenParsed);
+      }
+      return true;
+    } catch (err) {
+      console.warn('Failed to refresh token, triggering re-login:', err);
+      keycloak.login();
+      return false;
+    }
+  }, [extractAndSetUser]);
+
   // Check roles against realm_access.roles and client roles (normalized)
   const hasRole = useCallback((...requiredRoles) => {
     if (!keycloak.tokenParsed) return false;
     const realmRoles = keycloak.tokenParsed.realm_access?.roles || [];
-    const clientRoles = keycloak.tokenParsed.resource_access?.['transitops-frontend-client']?.roles || [];
-    const allRoles = [...realmRoles, ...clientRoles].map(normalizeRole);
+    const directRoles = keycloak.tokenParsed.roles || [];
+    const clientRoles = Object.values(keycloak.tokenParsed.resource_access || {}).flatMap(
+      (c) => c.roles || []
+    );
+
+    const allRoles = [...realmRoles, ...directRoles, ...clientRoles].map(normalizeRole);
 
     // ADMIN has universal operational role access
     if (allRoles.includes('ADMIN')) {
@@ -144,6 +170,7 @@ export const AuthProvider = ({ children }) => {
         hasRole,
         login,
         logout,
+        refreshToken,
       }}
     >
       {children}
