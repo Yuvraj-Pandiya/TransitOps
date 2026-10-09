@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   LayoutDashboard, Truck, Users, Route, Wrench,
-  Fuel, BarChart3, LogOut, Zap, Settings
+  Fuel, BarChart3, LogOut, Zap, Settings, ShieldAlert
 } from 'lucide-react';
 
 const navItems = [
@@ -38,8 +38,14 @@ export default function Sidebar() {
     logout();
   };
 
-  // Filter nav items based on the user's Keycloak roles
-  const filteredNavItems = navItems.filter((item) => item.roles.some((r) => hasRole(r)));
+  // Filter nav items based on user's Keycloak roles
+  let filteredNavItems = navItems.filter((item) => item.roles.some((r) => hasRole(r)));
+  const hasNoRoles = filteredNavItems.length === 0;
+
+  // Fallback: If user has no specific roles assigned yet in Keycloak, show Overview & Settings
+  if (hasNoRoles) {
+    filteredNavItems = navItems.filter((item) => ['/dashboard', '/settings'].includes(item.to));
+  }
 
   const grouped = filteredNavItems.reduce((acc, item) => {
     if (!acc[item.section]) acc[item.section] = [];
@@ -47,8 +53,9 @@ export default function Sidebar() {
     return acc;
   }, {});
 
-  const initials = user?.name?.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2) || 'TO';
-  const displayRole = roleLabels[user?.role] || user?.role?.replace('_', ' ') || 'User';
+  const initials = user?.name?.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2) ||
+                   user?.username?.slice(0, 2).toUpperCase() || 'TO';
+  const displayRole = roleLabels[user?.role] || (hasNoRoles ? 'No Role Assigned' : user?.role?.replace('_', ' '));
 
   return (
     <aside className="logistica-sidebar">
@@ -58,6 +65,24 @@ export default function Sidebar() {
       </div>
 
       <nav className="logistica-nav">
+        {hasNoRoles && (
+          <div style={{
+            margin: '0 16px 16px',
+            padding: '10px 12px',
+            borderRadius: '6px',
+            background: 'rgba(239, 68, 68, 0.1)',
+            border: '1px solid rgba(239, 68, 68, 0.25)',
+            fontSize: '12px',
+            color: '#ef4444',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <ShieldAlert size={16} style={{ flexShrink: 0 }} />
+            <span>No role mapped in Keycloak. Assign role in Keycloak Admin.</span>
+          </div>
+        )}
+
         {Object.entries(grouped).map(([section, items]) => (
           <div key={section} className="mb-3">
             <div className="text-muted" style={{ padding: '0 24px', fontSize: '12px', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '1px', marginBottom: '8px' }}>
@@ -84,8 +109,8 @@ export default function Sidebar() {
               {initials}
             </div>
             <div>
-              <div style={{ fontWeight: 600, fontSize: '14px', color: 'var(--text-main)' }}>{user?.name}</div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{displayRole}</div>
+              <div style={{ fontWeight: 600, fontSize: '14px', color: 'var(--text-main)' }}>{user?.name || user?.username}</div>
+              <div style={{ fontSize: '12px', color: hasNoRoles ? '#ef4444' : 'var(--text-muted)' }}>{displayRole}</div>
             </div>
           </div>
           <button

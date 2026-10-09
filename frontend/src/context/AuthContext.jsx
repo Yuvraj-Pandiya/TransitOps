@@ -5,6 +5,17 @@ const AuthContext = createContext(null);
 
 const KNOWN_ROLES = ['ADMIN', 'FLEET_MANAGER', 'DISPATCHER', 'SAFETY_OFFICER', 'FINANCIAL_ANALYST'];
 
+const normalizeRole = (role) => {
+  if (!role) return '';
+  const upper = role.toUpperCase();
+  if (upper === 'ADMIN' || upper === 'ADMINISTRATOR') return 'ADMIN';
+  if (upper === 'FLEET_MANAGER' || upper === 'FLEET' || upper === 'MANAGER') return 'FLEET_MANAGER';
+  if (upper === 'DISPATCHER' || upper === 'DISPATCH') return 'DISPATCHER';
+  if (upper === 'SAFETY_OFFICER' || upper === 'SAFETY') return 'SAFETY_OFFICER';
+  if (upper === 'FINANCIAL_ANALYST' || upper === 'FINANCE' || upper === 'ANALYST') return 'FINANCIAL_ANALYST';
+  return upper;
+};
+
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
@@ -22,18 +33,31 @@ export const AuthProvider = ({ children }) => {
         if (authenticated && keycloak.tokenParsed) {
           const parsed = keycloak.tokenParsed;
           const realmRoles = parsed.realm_access?.roles || [];
-          
+          const clientRoles = parsed.resource_access?.['transitops-frontend-client']?.roles || [];
+          const allRoles = Array.from(new Set([...realmRoles, ...clientRoles]));
+          const normalizedRoles = allRoles.map(normalizeRole);
+
+          // Log token parsed info to assist local testing & debugging
+          console.log('[TransitOps] Keycloak Token Authenticated:', {
+            username: parsed.preferred_username,
+            name: parsed.name,
+            email: parsed.email,
+            realmRoles,
+            clientRoles,
+            normalizedRoles,
+          });
+
           // Determine primary display role
-          const upperRoles = realmRoles.map((r) => r.toUpperCase());
-          const primaryRole = KNOWN_ROLES.find((r) => upperRoles.includes(r)) || realmRoles[0] || 'DISPATCHER';
+          const primaryRole = KNOWN_ROLES.find((r) => normalizedRoles.includes(r)) || normalizedRoles[0] || 'USER';
+          const displayName = parsed.name || (parsed.given_name ? `${parsed.given_name} ${parsed.family_name || ''}`.trim() : '') || parsed.preferred_username || 'User';
 
           setUser({
             id: parsed.sub,
             username: parsed.preferred_username || '',
-            name: parsed.name || parsed.preferred_username || 'TransitOps User',
+            name: displayName,
             email: parsed.email || '',
             role: primaryRole,
-            roles: realmRoles,
+            roles: normalizedRoles,
           });
         }
         setLoading(false);
@@ -59,20 +83,21 @@ export const AuthProvider = ({ children }) => {
     keycloak.login();
   }, []);
 
-  // Check roles against keycloak.tokenParsed.realm_access.roles
+  // Check roles against realm_access.roles and client roles (normalized)
   const hasRole = useCallback((...requiredRoles) => {
     if (!keycloak.tokenParsed) return false;
     const realmRoles = keycloak.tokenParsed.realm_access?.roles || [];
-    const upperRealmRoles = realmRoles.map((r) => r.toUpperCase());
+    const clientRoles = keycloak.tokenParsed.resource_access?.['transitops-frontend-client']?.roles || [];
+    const allRoles = [...realmRoles, ...clientRoles].map(normalizeRole);
 
     // ADMIN has universal operational role access
-    if (upperRealmRoles.includes('ADMIN')) {
+    if (allRoles.includes('ADMIN')) {
       return true;
     }
 
     return requiredRoles.some((role) => {
-      const upper = role.toUpperCase();
-      return upperRealmRoles.includes(upper);
+      const target = normalizeRole(role);
+      return allRoles.includes(target);
     });
   }, []);
 
