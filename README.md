@@ -1,6 +1,6 @@
 # TransitOps - Smart Transport Operations Platform (Backend)
 
-A microservices-based backend for fleet and transport operations. It digitizes vehicle, driver, trip, maintenance and expense management, enforces business rules on the server, and secures every API with Keycloak (OAuth2 / JWT) and role-based access control.
+A microservices-based backend for fleet and transport operations. It digitizes vehicle, driver, trip, maintenance, and expense management, enforces business rules on the server, and supports role-based access control and Keycloak authentication at the API Gateway.
 
 ## Tech Stack
 
@@ -8,31 +8,31 @@ A microservices-based backend for fleet and transport operations. It digitizes v
 |---|---|
 | Language / Framework | Java, Spring Boot |
 | Microservices | Spring Cloud: Eureka (discovery), OpenFeign (inter-service calls), Spring Cloud Gateway |
-| Security | Keycloak, OAuth2 / OpenID Connect, JWT, Spring Security (Resource Server) |
-| Database | PostgreSql (database per service) |
-| API Testing | Postman |
+| Security | Spring Security & Keycloak (OAuth2 / JWT) |
+| Database | PostgreSQL (database per service) |
+| API Testing | Postman (collection included) |
 
 ## Architecture
 
 ```
-                 Client / Postman (Bearer JWT from Keycloak)
-                                  |
-                                  v
-                 +-------------------------------+
-                 |  API Gateway (port 8765)      |
-                 |  validates JWT, checks roles, |
-                 |  routes /api/** by service    |
-                 +---------------+---------------+
-                                 |  lb:// (service names via Eureka)
-     +------------+------------+-+----------+-------------+
-     v            v            v            v             v
- vehicle-     driver-       trip-      maintenance-    expense-
- service      service      service       service       service
-                              |  OpenFeign
-                              +--> vehicle-service, driver-service
+                       Client / Postman
+                              |
+                              v
+             +---------------------------------+
+             |   API Gateway (port 8765)       |
+             |   routes /api/** by service     |
+             |   (role-based security / JWT)   |
+             +----------------+----------------+
+                              |  lb:// (service names via Eureka)
+      +------------+------------+-+----------+-------------+
+      v            v            v            v             v
+  vehicle-     driver-       trip-      maintenance-    expense-
+  service      service      service       service       service
+                               |  OpenFeign
+                               +--> vehicle-service, driver-service
 
-          Eureka Server  <-- every service registers here
-          Keycloak (port 8180, realm: transitops-realm) issues the tokens
+           Eureka Server  <-- every service registers here
+           Keycloak (port 8180, in progress) <-- user authentication
 ```
 
 ### Services
@@ -40,7 +40,7 @@ A microservices-based backend for fleet and transport operations. It digitizes v
 | Service | Responsibility | Calls (OpenFeign) |
 |---|---|---|
 | `eureka-server` | Service registry; all services register here | - |
-| `api-gateway` | Single entry point, JWT validation, role-based route protection, CORS | routes to all services |
+| `api-gateway` | Single entry point, request routing, role-based security, CORS | routes to all services |
 | `vehicle-service` | Vehicle registry, unique registration number, status (Available, On Trip, In Shop, Retired) | - |
 | `driver-service` | Driver profiles, license expiry, safety score, status (Available, On Trip, Off Duty, Suspended) | - |
 | `trip-service` | Trip lifecycle and dispatch rules | vehicle-service, driver-service |
@@ -76,21 +76,18 @@ Entities: Vehicles, Drivers, Trips, Maintenances, Expenses and Reports.
 | Vehicle - Expense | 1 : N |
 | Trip - Expense | 1 : N (optional) |
 
-Users and roles are managed by Keycloak, not by a service table.
+User identity and credentials are intentionally decoupled from business entities, intended for management by Keycloak.
 
 Because each service has its own database, these links across services are logical references by ID (for example `vehicleId` in Trips), validated through Feign calls and not by database foreign keys.
 
-## Security
+## Security & Access Control
 
-Authentication and authorization are handled by Keycloak and enforced at the API Gateway.
+Security is handled at the **API Gateway** level using Spring Security and Keycloak:
 
-1. The client logs in at Keycloak (realm `transitops-realm`) and receives a signed JWT.
-2. The client sends `Authorization: Bearer <token>` to the gateway.
-3. The gateway validates the token against Keycloak, reads the realm roles, and allows or rejects the request (401 for no/invalid token, 403 for a valid token without the needed role).
+- **Keycloak (Authentication):** Acts as the centralized identity provider running on port `8180` to issue access tokens (JWTs). *(Note: Keycloak integration is currently in basic setup / work in progress).*
+- **API Gateway (Authorization):** Checks the user's role on incoming `/api/**` requests and allows or blocks the action based on predefined permissions.
 
-### Roles and access
-
-R = read (GET), W = create / update / delete / actions. `ADMIN` has full access.
+### Roles and Access Matrix
 
 | Module | FLEET_MANAGER | DISPATCHER | SAFETY_OFFICER | FINANCIAL_ANALYST |
 |---|---|---|---|---|
@@ -101,16 +98,11 @@ R = read (GET), W = create / update / delete / actions. `ADMIN` has full access.
 | Expenses | R | - | - | W |
 | Reports | R | - | - | R |
 
-### Keycloak clients
-
-| Client | Type | Purpose |
-|---|---|---|
-| `transitops-frontend-client` | Public, Authorization Code + PKCE | Login for apps and Postman |
-| `transitops-gateway-client` | Confidential | Identity for the gateway |
+> **Legend:** `R` = Read (`GET`), `W` = Write / Create / Update / Delete (`POST`, `PUT`, `DELETE`). The `ADMIN` role has full access across all modules.
 
 ## API Overview
 
-All requests go through the gateway at `http://localhost:8765`. The gateway removes the `/api` prefix before forwarding.
+All routed requests go through the API Gateway at `http://localhost:8765`. The gateway removes the `/api` prefix before forwarding to the respective microservice:
 
 | Prefix | Service | Main operations |
 |---|---|---|
@@ -121,39 +113,62 @@ All requests go through the gateway at `http://localhost:8765`. The gateway remo
 | `/api/expenses` | expense-service | create, get by id, by vehicle, by type, total amount by vehicle, update, delete |
 | `/api/reports` | report-service | planned |
 
+## Postman API Collection & Testing
+
+A complete Postman collection containing pre-configured requests and JSON payloads for every service and gateway route is provided in this repository.
+
+### File Location
+```
+postman/TransitOps.postman_collection.json
+```
+
+### How to Import into Postman
+1. Open the **Postman** application.
+2. Click the **Import** button in the top left corner of the workspace.
+3. Select or drag-and-drop the file: `postman/TransitOps.postman_collection.json`.
+4. Click **Import**. The `TransitOps` collection will now be available in your Postman collection list.
+
+### Collection Folders & Usage
+
+The collection is organized into modular folders matching each service:
+
+| Folder | Target URL | Description |
+|---|---|---|
+| **`vehicle-service`** | `http://localhost:8080/vehicles` | Direct CRUD operations: create vehicle, get by ID, update vehicle details, delete. |
+| **`driver-service`** | `http://localhost:8081/drivers` | Direct driver management: create driver, view profiles, update status, delete. |
+| **`trip-service`** | `http://localhost:8082/trips` | Direct trip lifecycle: draft trip, dispatch, complete with odometer/fuel, cancel. |
+| **`maintenance-service`** | `http://localhost:8083/maintenances` | Direct maintenance workflows: schedule maintenance, view by vehicle, close maintenance. |
+| **`expense-service`** | `http://localhost:8084/expenses` | Direct expense tracking: log fuel/toll, get expenses by vehicle, query totals. |
+| **`api-gateway`** | `http://localhost:8765/api/...` | Tests all operations routed through the unified gateway entry point. |
+
+### Testing Modes
+- **Direct Service Testing:** Start `eureka-server` and the specific service you are working on, then run the requests in that service's folder (e.g., test vehicle APIs directly on port `8080`).
+- **Unified Gateway Testing:** Start all services and `api-gateway` (port `8765`), then trigger the endpoints under the `api-gateway` folder.
+
 ## Running Locally
 
 ### Prerequisites
-- Java (version used by the project) and Maven
-- PostgreSql running locally
-- Keycloak running on port 8180 with realm `transitops-realm`, the two clients, the roles and the test users configured
+- Java (JDK 21) and Maven
+- PostgreSQL running locally (configured for each service database)
+- *(Optional / In Progress)* Keycloak running on port 8180 with realm `transitops-realm`
 
-### Start order
-1. PostgreSQL and Keycloak
-2. `eureka-server` (dashboard at `http://localhost:8761`)
-3. `vehicle-service`, `driver-service`, `trip-service`, `maintenance-service`, `expense-service`
+### Start Order
+1. PostgreSQL
+2. `eureka-server` (discovery dashboard available at `http://localhost:8761`)
+3. Individual microservices:
+   - `vehicle-service` (port 8080)
+   - `driver-service` (port 8081)
+   - `trip-service` (port 8082)
+   - `maintenance-service` (port 8083)
+   - `expense-service` (port 8084)
 4. `api-gateway` (port 8765)
 
-Each service: `cd <service-folder>` then `mvn spring-boot:run`. Check the Eureka dashboard to confirm all services are registered.
-
-### Getting a token (Postman)
-- Auth type: OAuth 2.0, grant type Authorization Code (With PKCE), challenge method SHA-256
-- Auth URL: `http://localhost:8180/realms/transitops-realm/protocol/openid-connect/auth`
-- Token URL: `http://localhost:8180/realms/transitops-realm/protocol/openid-connect/token`
-- Client ID: `transitops-frontend-client`, callback `https://oauth.pstmn.io/v1/callback`
-
-### Test users
-
-| Username | Role |
-|---|---|
-| admin_user | ADMIN |
-| manager_user | FLEET_MANAGER |
-| dispatcher_user | DISPATCHER |
-| safety_user | SAFETY_OFFICER |
-| finance_user | FINANCIAL_ANALYST |
-| norole_user | none (expects 403) |
-
-Passwords are for local testing only and are not stored in this repository.
+To start any service:
+```bash
+cd <service-folder>
+mvn spring-boot:run
+```
+Open `http://localhost:8761` to verify all services are registered and active in Eureka.
 
 ## Example Workflow
 
@@ -168,9 +183,9 @@ Passwords are for local testing only and are not stored in this repository.
 ## Roadmap
 
 - [x] Eureka service registry
-- [x] Vehicle, driver, trip, maintenance and expense services
+- [x] Vehicle, driver, trip, maintenance, and expense services
 - [x] API Gateway with explicit routes and CORS
-- [x] Keycloak authentication and role-based access control at the gateway
+- [ ] Finalize Keycloak realm configuration and security hardening (in progress)
 - [ ] report-service (dashboard KPIs, fuel efficiency, operational cost, ROI, CSV export)
 - [ ] Resilience4j circuit breaker and fallbacks
 - [ ] Kafka events (for example `trip.completed` consumed by report-service)

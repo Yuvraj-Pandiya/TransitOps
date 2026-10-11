@@ -1,0 +1,1443 @@
+{
+  "info": {
+    "_postman_id": "ed8c189d-5af1-480a-ba00-a9cc6fc7b553",
+    "name": "TransitOps",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54467670",
+    "_collection_link": "https://go.postman.co/collection/54467670-ed8c189d-5af1-480a-ba00-a9cc6fc7b553?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "vehicle-service",
+      "item": [
+        {
+          "name": "getById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/vehicles/4",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "vehicles",
+                "4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"acquisitionCost\": 1450000.0,\r\n    \"id\": 45,\r\n    \"maxLoadCapacity\": 1200.0,\r\n    \"name\": \"Force Traveller Refrigerated Van\",\r\n    \"odometer\": 48000.0,\r\n    \"region\": \"Central-Region\",\r\n    \"registrationNumber\": \"MP-09-MD-1199\",\r\n    \"status\": \"Retired\",\r\n    \"type\": \"REFRIGERATED\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/vehicles/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "vehicles",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/vehicles/46",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "vehicles",
+                "46"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"registrationNumber\": \"MH-12-TX-9999\",\r\n  \"name\": \"Tata Signa 1918.K\",\r\n  \"type\": \"HEAVY_TRUCK\",\r\n  \"maxLoadCapacity\": 18500.00,\r\n  \"odometer\": 12500.50,\r\n  \"acquisitionCost\": 3500000.00,\r\n  \"status\": \"Available\",\r\n  \"region\": \"North-Region\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/vehicles",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "vehicles"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "driver-service",
+      "item": [
+        {
+          "name": "allDrivers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/drivers",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "drivers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "driverById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/drivers",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "drivers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "adddriver",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"M.S. Dhoni\",\r\n  \"licenseNumber\": \"JH-01-2022-0012345\",\r\n  \"licenseCategory\": \"HMV\",\r\n  \"licenseExpiryDate\": \"2033-07-07\",\r\n  \"contactNumber\": \"+91-9876543219\",\r\n  \"safetyScore\": 99.2,\r\n  \"status\": \"Available\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8081/drivers",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "drivers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updateDriver",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\" : 36,\r\n  \"name\": \"Hina\",\r\n  \"licenseNumber\": \"JH-01-2022-0012345\",\r\n  \"licenseCategory\": \"HMV\",\r\n  \"licenseExpiryDate\": \"2033-07-07\",\r\n  \"contactNumber\": \"+91-9876543219\",\r\n  \"safetyScore\": 99.2,\r\n  \"status\": \"Available\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8081/drivers",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "drivers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deleteDriver",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/drivers/72",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "drivers",
+                "72"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "trip-service",
+      "item": [
+        {
+          "name": "createTrip",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"source\": \"Indore Warehouse\",\r\n  \"destination\": \"Hyderabad Hub\",\r\n  \"vehicleId\": 5,\r\n  \"driverId\": 12,\r\n  \"cargoWeight\": 450.00,\r\n  \"plannedDistance\": 880.00,\r\n  \"revenue\": 32500.00\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8082/trips",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "trips"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getTripById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/trips/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "trips",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "dispatch",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/trips/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "trips",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "complete",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"finalOdometer\": 45250.00,\r\n  \"fuelConsumed\": 45.50\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8082/complete/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "complete",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "cancel",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/complete/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "complete",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/trips/4",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "trips",
+                "4"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "maintenance-service",
+      "item": [
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"vehicleId\": 1,\r\n  \"description\": \"Oil Change and Filter Replacement\",\r\n  \"cost\": 1500.0\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8083/maintenances",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8083",
+              "path": [
+                "maintenances"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "findByid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/maintenances/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8083",
+              "path": [
+                "maintenances",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getrecordsbyvehicle",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/maintenances/vehicle/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8083",
+              "path": [
+                "maintenances",
+                "vehicle",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "close",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/maintenances/close/7",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8083",
+              "path": [
+                "maintenances",
+                "close",
+                "7"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updaterecord",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\" : 7,\r\n    \"description\" : \"Brake Changed and HeadLight\",\r\n    \"cost\" : 1789.00\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8083/maintenances",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8083",
+              "path": [
+                "maintenances"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/maintenances/8",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8083",
+              "path": [
+                "maintenances",
+                "8"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "expense-service",
+      "item": [
+        {
+          "name": "createExpense",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"vehicleId\": 5,\r\n  \"tripId\": 12,\r\n  \"type\": \"FUEL\",\r\n  \"liters\": 45.5,\r\n  \"amount\": 4500.0,\r\n  \"expenseDate\": \"2026-10-02\"\r\n}\r\n// {\r\n//   \"vehicleId\": 5,\r\n//   \"tripId\": 12,\r\n//   \"type\": \"TOLL\",\r\n//   \"amount\": 350.0,\r\n//   \"expenseDate\": \"2026-10-02\"\r\n// }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8084/expenses",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8084",
+              "path": [
+                "expenses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8084/expenses/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8084",
+              "path": [
+                "expenses",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getExpenseByVehicleId",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8084/expenses/vehicle/5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8084",
+              "path": [
+                "expenses",
+                "vehicle",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getExpenseByType",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8084/expenses/type/fuel",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8084",
+              "path": [
+                "expenses",
+                "type",
+                "fuel"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "totalAmountByVehicleID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"vehicleId\": 5,\r\n  \"tripId\": 12,\r\n  \"type\": \"Others\",\r\n  \"amount\": 350.0,\r\n  \"expenseDate\": \"2026-10-02\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8084/expenses/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8084",
+              "path": [
+                "expenses",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8084/expenses/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8084",
+              "path": [
+                "expenses",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "api-gateway",
+      "item": [
+        {
+          "name": "vehicle",
+          "item": [
+            {
+              "name": "createVehicle",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"registrationNumber\": \"MH-12-TX-9999\",\r\n  \"name\": \"Tata Signa 1918.K\",\r\n  \"type\": \"HEAVY_TRUCK\",\r\n  \"maxLoadCapacity\": 18500.00,\r\n  \"odometer\": 12500.50,\r\n  \"acquisitionCost\": 3500000.00,\r\n  \"status\": \"Available\",\r\n  \"region\": \"North-Region\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8765/api/vehicles/1",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "vehicles",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "getVehicleById",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8765/api/vehicles/47",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "vehicles",
+                    "47"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "updateVehicle",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"acquisitionCost\": 1450000.0,\r\n    \"id\": 45,\r\n    \"maxLoadCapacity\": 1200.0,\r\n    \"name\": \"Force Traveller Refrigerated Van\",\r\n    \"odometer\": 48000.0,\r\n    \"region\": \"Central-Region\",\r\n    \"registrationNumber\": \"MP-09-MD-1199\",\r\n    \"status\": \"Retired\",\r\n    \"type\": \"REFRIGERATED\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8765/api/vehicles",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "vehicles"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "deleteVehiclesById",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"acquisitionCost\": 1450000.0,\r\n    \"id\": 45,\r\n    \"maxLoadCapacity\": 1200.0,\r\n    \"name\": \"Force Traveller Refrigerated Van\",\r\n    \"odometer\": 48000.0,\r\n    \"region\": \"Central-Region\",\r\n    \"registrationNumber\": \"MP-09-MD-1199\",\r\n    \"status\": \"Retired\",\r\n    \"type\": \"REFRIGERATED\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8765/api/vehicles/47",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "vehicles",
+                    "47"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "driver",
+          "item": [
+            {
+              "name": "createDriver",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"name\": \"Parul\",\r\n  \"licenseNumber\": \"JH-01-2022-0132345\",\r\n  \"licenseCategory\": \"HMV\",\r\n  \"licenseExpiryDate\": \"2033-07-07\",\r\n  \"contactNumber\": \"+91-98762343219\",\r\n  \"safetyScore\": 97.0,\r\n  \"status\": \"Available\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8765/api/drivers",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "drivers"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "getDriverById",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8765/api/drivers/73",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "drivers",
+                    "73"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "getAllDrivers",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8765/api/drivers",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "drivers"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "updateDrivers",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"contactNumber\": \"+91-98762343219\",\r\n    \"id\": 73,\r\n    \"licenseCategory\": \"HMV\",\r\n    \"licenseExpiryDate\": \"2033-07-07\",\r\n    \"licenseNumber\": \"JH-01-2022-0132345\",\r\n    \"name\": \"Parul Shetty\",\r\n    \"safetyScore\": 97.0,\r\n    \"status\": \"Available\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8765/api/drivers",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "drivers"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "deleteDriver",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8765/api/drivers/73",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "drivers",
+                    "73"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "trips",
+          "item": [
+            {
+              "name": "createTrip",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"source\": \"Indore Warehouse\",\r\n  \"destination\": \"Hyderabad Hub\",\r\n  \"vehicleId\": 5,\r\n  \"driverId\": 12,\r\n  \"cargoWeight\": 450.00,\r\n  \"plannedDistance\": 880.00,\r\n  \"revenue\": 32500.00\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8765/api/trips",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "trips"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "getTripById",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8765/api/trips/6",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "trips",
+                    "6"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "dispatch",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8765/api/trips/dispatch/6",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "trips",
+                    "dispatch",
+                    "6"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "complete",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"finalOdometer\": 45250.00,\r\n  \"fuelConsumed\": 80.50\r\n}\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8765/api/trips/complete/6",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "trips",
+                    "complete",
+                    "6"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "cancel",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8765/api/trips/cancel/6",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "trips",
+                    "cancel",
+                    "6"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "deleteTrip",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8765/api/trips/1",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "trips",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "maintenance",
+          "item": [
+            {
+              "name": "createMaintenance",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"vehicleId\": 1,\r\n  \"description\": \"Oil Change and Filter Replacement\",\r\n  \"cost\": 1500.0\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8765/api/maintenances",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "maintenances"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "findById",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8765/api/maintenances/11",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "maintenances",
+                    "11"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "getRecordsByVehicleId",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8765/api/maintenances/vehicle/24",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "maintenances",
+                    "vehicle",
+                    "24"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "closeMaint",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8765/api/maintenances/close/10",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "maintenances",
+                    "close",
+                    "10"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "updateMaintenance",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"id\" : 11,\r\n    \"description\" : \"Brake Changed and HeadLight\",\r\n    \"cost\" : 1789.00\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8765/api/maintenances",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "maintenances"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "deleteMaintenances",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8765/api/maintenances/11",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "maintenances",
+                    "11"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "expense",
+          "item": [
+            {
+              "name": "createExpense",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"vehicleId\": 5,\r\n  \"tripId\": 12,\r\n  \"type\": \"FUEL\",\r\n  \"liters\": 45.5,\r\n  \"amount\": 4500.0,\r\n  \"expenseDate\": \"2026-10-02\"\r\n}\r\n// {\r\n//   \"vehicleId\": 5,\r\n//   \"tripId\": 12,\r\n//   \"type\": \"TOLL\",\r\n//   \"amount\": 350.0,\r\n//   \"expenseDate\": \"2026-10-02\"\r\n// }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8765/api/expenses",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "expenses"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "getById",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8765/api/expenses/3",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "expenses",
+                    "3"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "getByVehicleID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8765/api/expenses/vehicle/7",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "expenses",
+                    "vehicle",
+                    "7"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "expenseByType",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8084/expenses/type/toll",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8084",
+                  "path": [
+                    "expenses",
+                    "type",
+                    "toll"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "totalAmtByVehicleId",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8084/expenses/total/vehicle/3",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8084",
+                  "path": [
+                    "expenses",
+                    "total",
+                    "vehicle",
+                    "3"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "updateExpense",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"vehicleId\": 5,\r\n  \"tripId\": 12,\r\n  \"type\": \"Others\",\r\n  \"amount\": 350.0,\r\n  \"expenseDate\": \"2026-10-02\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8765/api/expenses/5",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "expenses",
+                    "5"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "deleteExpense",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8765/api/expenses/5",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8765",
+                  "path": [
+                    "api",
+                    "expenses",
+                    "5"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "clientId",
+        "value": "transitops-frontend-client",
+        "type": "string"
+      },
+      {
+        "key": "accessTokenUrl",
+        "value": "http://localhost:8180/realms/transitops-realm/protocol/openid-connect/token",
+        "type": "string"
+      },
+      {
+        "key": "authUrl",
+        "value": "http://localhost:8180/realms/transitops-realm/protocol/openid-connect/auth",
+        "type": "string"
+      },
+      {
+        "key": "tokenName",
+        "value": "dispatcher_token",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "scope",
+        "value": "openid",
+        "type": "string"
+      },
+      {
+        "key": "client_authentication",
+        "value": "body",
+        "type": "string"
+      },
+      {
+        "key": "redirect_uri",
+        "value": "https://oauth.pstmn.io/v1/callback",
+        "type": "string"
+      },
+      {
+        "key": "grant_type",
+        "value": "authorization_code_with_pkce",
+        "type": "string"
+      },
+      {
+        "key": "useBrowser",
+        "value": true,
+        "type": "boolean"
+      }
+    ]
+  }
+}
